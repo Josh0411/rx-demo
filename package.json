@@ -7,7 +7,8 @@
     "build": "./node_modules/webpack/bin/webpack.js -p",
     "dev-server": "./node_modules/webpack-dev-server/bin/webpack-dev-server.js --content-base build/",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "linfeng": "webpack --config webpack.linfeng.config.js"
+    "linfeng": "webpack --config webpack.linfeng.config.js",
+    "linfeng:prod": "set NODE_ENV=production&&webpack --config webpack.linfeng.config.js"
   },
   "author": "",
   "license": "ISC",
@@ -28,7 +29,9 @@
     "expose-loader": "^0.7.1",
     "extract-text-webpack-plugin": "^1.0.1",
     "file-loader": "^0.9.0",
+    "html-critical-webpack-plugin": "^1.0.1",
     "html-webpack-plugin": "^2.24.1",
+    "jquery": "^3.2.1",
     "lowdb": "^1.0.0",
     "node-sass": "^4.5.3",
     "postcss-cssnext": "^2.8.0",
@@ -37,7 +40,7 @@
     "postcss-reporter": "^1.4.1",
     "sass-loader": "^6.0.6",
     "style-loader": "^0.13.1",
-    "url-loader": "^0.5.7",
+    "url-loader": "^0.5.9",
     "webpack": "^1.13.1",
     "webpack-dev-server": "^1.16.2"
   },

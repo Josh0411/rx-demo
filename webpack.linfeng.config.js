@@ -3,19 +3,23 @@ const ROOT_PATH = path.join(__dirname); // 项目根目录
 const CleanPlugin = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
-const autoprefixer = require('autoprefixer')
-const webpack = require('webpack')
+const autoprefixer = require('autoprefixer');
+const webpack = require('webpack');
+const production = process.env.NODE_ENV == 'production';
+const HtmlCriticalPlugin = require("html-critical-webpack-plugin");
 
+console.log('production', production);
 
 module.exports = {
     entry: {
         linfeng: './src/js/linfeng.js',
-        asyncjs: './src/js/async.js',
-        a: './src/js/a.js'
+        josh: './src/js/josh.js',
+        person: './src/js/person.js'
     },
     output: {
-        filename: '[name].bundle.js',
-        path: path.resolve(ROOT_PATH, 'linfeng_build')
+        filename: '[name].js',
+        chunkFilename: '../js/chunkfile.[hash].js',
+        path: path.resolve(ROOT_PATH, 'linfeng_build/js'),
     },
     module: {
         loaders: [{
@@ -27,7 +31,10 @@ module.exports = {
             }
         }, {
             test: /\.scss$/,
-            loader: ExtractTextPlugin.extract('style-loader', "css-loader!postcss-loader!sass-loader")
+            loader: ExtractTextPlugin.extract('style-loader', "css-loader!postcss-loader")
+        }, {
+            test: /\.(jpg|png|jpg|gif)$/,
+            loader: "url?limit=10000&name=[name].[ext]"
         }]
 
     },
@@ -40,24 +47,46 @@ module.exports = {
             root: ROOT_PATH,
             verbose: true
         }),
-        new webpack.optimize.CommonsChunkPlugin({name: "commons", filename: "commons.js",chunks: ['asyncjs', 'a']}),
-        new ExtractTextPlugin('[name]-[contenthash]-min.css', { allChunks: true, disable: false }),
+
+
+        new webpack.BannerPlugin('版权所有，翻版必究'),
+
+        new ExtractTextPlugin('[name].css', { allChunks: true, disable: false }),
+        new webpack.optimize.CommonsChunkPlugin({ name: "commons", filename: "commons.[hash:8].js", chunks: ['linfeng', 'josh'] }),
+
         new webpack.optimize.UglifyJsPlugin({
             compress: {
                 warnings: false
             }
         }),
+
         new HtmlWebpackPlugin({
-            filename: 'linfeng.html',
+            filename: __dirname + '/linfeng_build/html/linfeng.html',
             template: 'src/linfeng.html',
-            chunks: ['linfeng', 'asyncjs']
+            chunks: ['linfeng', 'person','commons'],
+            hash: true
         }),
         new HtmlWebpackPlugin({
-            filename: 'a.html',
-            template: 'src/a.html',
-            chunks: ['a']
-        })
+            filename:   __dirname + '/linfeng_build/html/josh.html',
+            template: 'src/josh.html',
+            chunks: ['josh', 'person'],
+            hash: true
+        }),
 
+
+        /*new HtmlCriticalPlugin({
+            base: path.join(path.resolve(__dirname), 'linfeng_build/'),
+            src: 'linfeng.html',
+            dest: 'linfeng.html',
+            inline: true,
+            minify: true,
+            extract: true,
+            width: 375,
+            height: 565,
+            penthouse: {
+                blockJSRequests: false,
+            }
+        })*/
     ],
     debug: true,
     displayErrorDetails: true,
